@@ -37,3 +37,20 @@
 from models import get_model, ImageRepExtractor, TextRepExtractor, VSEPP
 model = get_model("your_ckpt_path")
 ```
+
+### 微调(训练步骤，泰迪杯2024B):
+首先确保你的数据在./data文件夹下
+1. 运行myDataset.py，生成数据集划分文件(生成json)
+2. 创建./model文件夹
+3. 运行train.py，训练模型得到ckpt文件
+
+### 使用模型(泰迪杯2024B):
+1. 建立./pts文件夹
+2. 将./model文件夹下的ckpt文件建议重命名移动到./pts文件夹下
+
+3. （可选）运行calculate_recall_at_k.py，计算召回率
+
+### 网页部署(泰迪杯2024B):
+1. 运行get_test_index.py，生成索引文件I.index和T.index,并命名为I[日期].index和T[日期].index
+2. 命令行到根目录（项目目录）`streamlit run test_page.py`
+3. 浏览器打开`http://localhost:8501/`即可看到网页，也会自动弹出
