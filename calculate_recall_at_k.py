@@ -34,7 +34,7 @@ def calculate_recall_at_k(model_path="./pts/best_model0419.ckpt", mode="I2T", da
             # print(os.getcwd())
             _, text_code = get_features(model=model, img_paths=img_paths[0],
                                         captions=captions[i])
-            text_code = text_code.cpu()
+            text_code = text_code.cpu().numpy()
             # print(text_code.shape)
 
             D, I = I_index_map.search(text_code, k)
@@ -52,14 +52,14 @@ def calculate_recall_at_k(model_path="./pts/best_model0419.ckpt", mode="I2T", da
             # print(os.getcwd())
             img_code, _ = get_features(model=model, img_paths=img_paths[i],
                                        captions="")
-            img_code = img_code.cpu()
+            img_code = img_code.cpu().numpy()
 
             D, I = T_index_map.search(img_code, k)
             if i in I[0]:
                 count += 1
         return count / len(img_paths)
 
-
+# 这个效率很低啊，建议自己写吧
 if __name__ == "__main__":
     import logging
 
@@ -77,15 +77,18 @@ if __name__ == "__main__":
     I_index_path0419 = "./indexs/I0419.index"
     T_index_path0419 = "./indexs/T0419.index"
 
-    data_json_path = "test.json"
+    data_json_path = "test_data.json"
 
     k_list = [1, 5, 10, 100]
 
     recall_dic = {}
     recall_dic["0416"] = defaultdict(list)
     #{"0416":{"I2T":[],"T2I":[]},"0419":{"I2T":[],"T2I":[]
+
+
     # 计算0416 Recall@k
     for k in k_list:
+        logging.info(f"开始计算0416 I2T的Recall@{k}")
         # I2T
         recall = calculate_recall_at_k(
             model_path=model_path0416,
@@ -97,6 +100,9 @@ if __name__ == "__main__":
         )
         recall_dic["0416"]["I2T"].append(recall)
         logging.info(f"0416 I2T Recall@{k}:{recall}")
+
+        logging.info(f"开始计算0416 T2I的Recall@{k}")
+
         # T2I
         recall = calculate_recall_at_k(
             model_path=model_path0416,
@@ -110,6 +116,7 @@ if __name__ == "__main__":
         logging.info(f"0416 T2I Recall@{k}:{recall}")
 
     for k in k_list:
+        logging.info(f"开始计算0419 I2T的Recall@{k}")
         # I2T
         recall = calculate_recall_at_k(
             model_path=model_path0419,
@@ -121,6 +128,9 @@ if __name__ == "__main__":
         )
         recall_dic["0419"]["I2T"].append(recall)
         logging.info(f"0419 I2T Recall@{k}:{recall}")
+
+        logging.info(f"开始计算0419 T2I的Recall@{k}")
+
         # T2I
         recall = calculate_recall_at_k(
             model_path=model_path0419,
@@ -132,3 +142,4 @@ if __name__ == "__main__":
         )
         recall_dic["0419"]["T2I"].append(recall)
         logging.info(f"0419 T2I Recall@{k}:{recall}")
+    logging.info(str(recall_dic))
