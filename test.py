@@ -11,6 +11,6 @@ if __name__ == '__main__':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("device:",device)
 
-    with open("test_data.json", "r") as f:
+    with open("jsons/泰迪杯2024B/test_data.json", "r") as f:
         data = json.load(f)
     print(data)

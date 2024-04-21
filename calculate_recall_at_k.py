@@ -77,7 +77,7 @@ if __name__ == "__main__":
     I_index_path0419 = "./indexs/I0419.index"
     T_index_path0419 = "./indexs/T0419.index"
 
-    data_json_path = "test_data.json"
+    data_json_path = "jsons/泰迪杯2024B/test_data.json"
 
     k_list = [1, 5, 10, 100]
 

@@ -19,11 +19,19 @@ def my_model(_pt_path="./pts/best_model0419.ckpt"):
     return model
 
 
-def get_dataset_data(json_path, all_data_path="./data/ImageWordData.csv"):
-    with open(json_path, "r") as f:
-        data = json.load(f)
-    df = pd.read_csv(all_data_path, encoding="utf-8")
-    return data, df
+def get_dataset_data(json_path, dataset_name="泰迪杯2024B"):
+    if dataset_name == "泰迪杯2024B":
+        all_data_path = "./data/ImageWordData.csv"
+        with open(json_path, "r") as f:
+            data = json.load(f)
+        df = pd.read_csv(all_data_path, encoding="utf-8")
+        return data, df
+    if dataset_name == "flicker30k":
+        with open(json_path, "r") as f:
+            data = json.load(f)
+        df = pd.read_csv(f'./data/Flickr30k-CNA/test/flickr30k_cn_test.txt', sep='\t', header=None, names=['image_id', 'caption'])
+        return data, df
+
 
 
 def preprocess_I(image_paths):
@@ -82,16 +90,16 @@ def get_features(model, img_paths, captions):
     return image_code, text_code
 
 
-def main(MODEL_PATH="./pts/best_model0419.ckpt", getWhat="T"):
+def main(MODEL_PATH="./pts/best_model0419.ckpt", getWhat="T", dataset_name="泰迪杯2024B"):
     import logging
 
-    logging.basicConfig(filename="get_test_index.log",
+    logging.basicConfig(filename=f"get_test_index_{dataset_name}.log",
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         filemode="a",
                         level=logging.INFO)
     logging.info("开始运行")
 
-    my_test_data, df = get_dataset_data(json_path="test_data.json")
+    my_test_data, df = get_dataset_data(json_path=f"jsons/{dataset_name}/test_data.json")
     print("加载数据成功")
     logging.info("加载数据成功")
     captions, img_paths = [], []
@@ -127,7 +135,7 @@ def main(MODEL_PATH="./pts/best_model0419.ckpt", getWhat="T"):
             print(f"I-{i}添加成功")
             logging.info(f"I-{i}添加成功")
 
-        faiss.write_index(I_index_map, "I.index")
+        faiss.write_index(I_index_map, f"I{dataset_name}.index")
         print("Image的index全部写入成功")
         logging.info("Image的index全部写入成功")
     if getWhat == "T":
@@ -146,7 +154,7 @@ def main(MODEL_PATH="./pts/best_model0419.ckpt", getWhat="T"):
             print(text_code.shape)
             print(f"T-{i}添加成功")
             logging.info(f"T-{i}添加成功")
-        faiss.write_index(T_index_map, "T.index")
+        faiss.write_index(T_index_map, f"T{dataset_name}.index")
         print("Text的index全部写入成功")
         logging.info("Text的index全部写入成功")
 
@@ -156,4 +164,6 @@ def main(MODEL_PATH="./pts/best_model0419.ckpt", getWhat="T"):
 
 if __name__ == "__main__":
     # MODEL_PATH填入模型路径，getWhat填入"I"或"T"，分别获取图向量和文向量对应的.index，可分别用于文搜图和图搜文
-    main(MODEL_PATH="./pts/best_model0416.ckpt", getWhat="T")
+    # dataset_name填入数据集名称，用于生成对应的.index文件. 例如"泰迪杯2024B"或"flicker30k"与./data/下的文件夹对应
+    main(MODEL_PATH="./pts/best_model0416.ckpt", getWhat="T",dataset_name="flicker30k")
+    # main(MODEL_PATH="./pts/best_model0416.ckpt", getWhat="I",dataset_name="flicker30k")

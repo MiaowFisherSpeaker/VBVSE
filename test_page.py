@@ -29,15 +29,26 @@ def my_model(_pt_path="best_model0416.ckpt"):
 
 
 @st.cache_data
-def get_dataset_data(json_path, all_data_path="./data/ImageWordData.csv"):
-    with open(json_path, "r") as f:
-        data = json.load(f)
-    df = pd.read_csv(all_data_path, encoding="utf-8")
-    return data, df
+def get_dataset_data(json_path, dataset_name="泰迪杯2024B"):
+    if dataset_name == "泰迪杯2024B":
+        all_data_path = "./data/ImageWordData.csv"
+        with open(json_path, "r") as f:
+            data = json.load(f)
+        df = pd.read_csv(all_data_path, encoding="utf-8")
+        return data, df
+    if dataset_name == "flicker30k":
+        with open(json_path, "r") as f:
+            data = json.load(f)
+        df = pd.read_csv(f'./data/Flickr30k-CNA/test/flickr30k_cn_test.txt', sep='\t', header=None, names=['image_id', 'caption'])
+        return data, df
 
 
 
 st.title("模型测试页面")
+
+dataset_name = st.sidebar.selectbox("选择数据集", [None,"泰迪杯2024B", "flicker30k"])
+if not dataset_name:
+    st.stop()
 
 # 获取pts文件夹下所有文件名称
 pt_list = glob.glob("./pts/*.ckpt")
@@ -47,6 +58,7 @@ if pt_path:
     model = my_model(pt_path)
     if torch.cuda.is_available():
         model = model.to('cuda')
+
 # 获取数据
 mode = st.sidebar.selectbox("选择模式", ["仅测试", "more"])
 if mode == "仅测试":
@@ -60,7 +72,7 @@ else:
     ]
 json_path = st.selectbox("选择数据", json_list)
 if json_path != "":
-    my_test_data, df = get_dataset_data(json_path)
+    my_test_data, df = get_dataset_data("./jsons/"+dataset_name+"/"+json_path, dataset_name=dataset_name)
 
 # 加载全部数据
 if st.sidebar.button("数据集展示"):

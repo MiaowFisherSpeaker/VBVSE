@@ -7,6 +7,7 @@
       <excludeFolder url="file://$MODULE_DIR$/data/ImageData" />
       <excludeFolder url="file://$MODULE_DIR$/indexs" />
       <excludeFolder url="file://$MODULE_DIR$/pts" />
+      <excludeFolder url="file://$MODULE_DIR$/jsons" />
     </content>
     <orderEntry type="jdk" jdkName="faiss" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

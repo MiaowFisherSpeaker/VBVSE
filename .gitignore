@@ -1,6 +1,4 @@
 /data/ImageData/
-/val_data.json
-/train_data.json
-/test_data.json
+/jsons/*
 /pts/*.ckpt
 /indexs/*.index
