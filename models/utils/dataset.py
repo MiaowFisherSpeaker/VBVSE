@@ -74,7 +74,7 @@ class ImageTextDataset(Dataset):
         return self.dataset_size
 
 
-def mktrainval(data_dir, batch_size, workers=4):
+def mktrainval(data_dir, batch_size, workers=8):
     """
     参数：
         data_dir: json 文件夹位置

@@ -2,9 +2,9 @@ from argparse import Namespace
 
 from transformers import AutoTokenizer
 
-DATEINFO="0416"
+DATEINFO="0420"
 MY_INFO = """
-本次训练，于4/16开始，修改了图像特征处理模型的归一化问题，调整batch_size为32
+本次训练于 0420开始，对于样本数据，均采用Q&A式模型去除噪声
 """
 # 模型参数
 config = Namespace(
@@ -13,6 +13,7 @@ config = Namespace(
       embed_size=1024,
       image_model="vit-base-patch16-224-in21k",
       text_model="bge-large-zh-v1.5",
+      modify_model = "deepset/roberta-base-squad2",
       tokenizer=AutoTokenizer.from_pretrained('BAAI/bge-large-zh-v1.5'),
       finetuned=True,
       learning_rate=0.00002,

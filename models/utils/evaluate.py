@@ -63,9 +63,9 @@ def calc_recall(image_codes, text_codes, captions_per_image):
     r1_t2i = 100.0 * len(np.where(ranks_t2i < 1)[0]) / n_text
     r5_i2t = 100.0 * len(np.where(ranks_i2t < 5)[0]) / n_image
     r5_t2i = 100.0 * len(np.where(ranks_t2i < 5)[0]) / n_text
-    # r10_i2t = 100.0 * len(np.where(ranks_i2t < 10)[0]) / n_image
-    # r10_t2i = 100.0 * len(np.where(ranks_t2i < 10)[0]) / n_text
+    r10_i2t = 100.0 * len(np.where(ranks_i2t < 10)[0]) / n_image
+    r10_t2i = 100.0 * len(np.where(ranks_t2i < 10)[0]) / n_text
 
-    # return r1_i2t, r1_t2i, r5_i2t, r5_t2i, r10_i2t, r10_t2i
+    return r1_i2t, r1_t2i, r5_i2t, r5_t2i, r10_i2t, r10_t2i
     # return r5_i2t, r5_t2i
-    return r1_i2t, r1_t2i, r5_i2t, r5_t2i
+    # return r1_i2t, r1_t2i, r5_i2t, r5_t2i

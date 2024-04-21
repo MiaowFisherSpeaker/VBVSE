@@ -102,12 +102,12 @@ if __name__ == '__main__':
             }
 
             if (i + 1) % config.evaluate_step == 0:
-                r1_i2t, r1_t2i, _, _ = evaluate(data_loader=val_loader,
+                _,_,r5_i2t, r5_t2i,_,_ = evaluate(data_loader=val_loader,
                                                 model=model,
                                                 batch_size=config.batch_size,
                                                 captions_per_image=config.captions_per_image
                                                 )
-                recall_sum = r1_i2t + r1_t2i
+                recall_sum = r5_i2t + r5_t2i
 
                 # 选择模型
                 if best_res < recall_sum:
@@ -122,9 +122,9 @@ if __name__ == '__main__':
     # 用效果最好的模型在测试集上进行测试
     checkpoint = torch.load(config.best_checkpoint)
     model = checkpoint['model']
-    r1_i2t, r1_t2i, r5_i2t, r5_t2i = evaluate(data_loader=test_loader, model=model, batch_size=config.batch_size,
+    r1_i2t, r1_t2i, r5_i2t, r5_t2i,r10_i2t,r10_t2i = evaluate(data_loader=test_loader, model=model, batch_size=config.batch_size,
                                               captions_per_image=config.captions_per_image)
     print(
-        f"Epoch: {checkpoint['epoch']}, \n I2T R@1: {r1_i2t}, T2I R@1: {r1_t2i}, \t I2T R@5: {r5_i2t}, T2I R@5: {r5_t2i}")
+        f"Epoch: {checkpoint['epoch']}, \n I2T R@1: {r1_i2t}, T2I R@1: {r1_t2i}, \t I2T R@5: {r5_i2t}, T2I R@5: {r5_t2i}, \t I2T R@10: {r10_i2t}, T2I R@10: {r10_t2i}")
     logging.info(
-        f"Epoch: {checkpoint['epoch']}, \n I2T R@1: {r1_i2t}, T2I R@1: {r1_t2i}, \t I2T R@5: {r5_i2t}, T2I R@5: {r5_t2i}")
+        f"Epoch: {checkpoint['epoch']}, \n I2T R@1: {r1_i2t}, T2I R@1: {r1_t2i}, \t I2T R@5: {r5_i2t}, T2I R@5: {r5_t2i}, \t I2T R@10: {r10_i2t}, T2I R@10: {r10_t2i}")

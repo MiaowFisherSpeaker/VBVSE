@@ -16,7 +16,7 @@ from transformers import AutoImageProcessor
 from get_test_index import preprocess_I,preprocess_T,get_features
 from models import get_model, ImageRepExtractor, TextRepExtractor, VSEPP
 from models import mktrainval, config
-from preprocessCaptions import get_sumary_text
+from preprocessCaptions import get_summary_text
 
 
 
@@ -140,7 +140,7 @@ if glob.glob("./indexs/I*.index"):
     if my_num != "":
         text_empty.markdown("### 测试单个文本搜k=5图片")
         raw_captions = (captions[my_num])
-        mycaption = raw_captions if not isModified else get_sumary_text(raw_captions,question=question)
+        mycaption = raw_captions if not isModified else get_summary_text(raw_captions,question=question)
         _, text_code = get_features(model=model, img_paths=img_paths[0],
                                     captions=mycaption)
         text_code = text_code.cpu()
@@ -163,7 +163,7 @@ if glob.glob("./indexs/I*.index"):
         if my_num != "":
             st.warning("请先清空上方数字")
             st.stop()
-        st.sidebar.text(f"修饰后:{get_sumary_text(my_text,question=question)},此处不采用修饰后搜索")
+        st.sidebar.text(f"修饰后:{get_summary_text(my_text,question=question)},此处不采用修饰后搜索")
         text_empty.markdown("### 自定义文本搜k=5图片")
         _, text_code = get_features(model=model, img_paths=img_paths[0],
                                     captions=my_text)
