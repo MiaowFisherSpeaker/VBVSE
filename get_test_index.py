@@ -3,6 +3,7 @@ import pandas as pd
 import faiss
 import torch
 import numpy as np
+from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
 from transformers import AutoImageProcessor
 from PIL import Image
@@ -89,6 +90,30 @@ def get_features(model, img_paths, captions):
         image_code, text_code = model(imgs, caps, cap_lens=1)
     return image_code, text_code
 
+class TestDataset(Dataset):
+    def __init__(self, data,transformImg=None,transformText=None):
+        self.data = data
+        self.transformImg = transformImg
+        self.transformText = transformText
+
+    def __len__(self):
+        return len(self.data["IMAGES"])
+
+    def __getitem__(self, i):
+        img_path = self.data["IMAGES"][i]
+        caption = self.data["CAPTIONS"][i]
+
+        if self.transformImg:
+            img_path = self.transformImg(img_path)
+        if self.transformText:
+            caption = self.transformText(caption)
+        return img_path,caption
+
+
+
+
+
+
 
 def main(MODEL_PATH="./pts/best_model0419.ckpt", getWhat="T", dataset_name="泰迪杯2024B"):
     import logging
@@ -165,5 +190,15 @@ def main(MODEL_PATH="./pts/best_model0419.ckpt", getWhat="T", dataset_name="泰�
 if __name__ == "__main__":
     # MODEL_PATH填入模型路径，getWhat填入"I"或"T"，分别获取图向量和文向量对应的.index，可分别用于文搜图和图搜文
     # dataset_name填入数据集名称，用于生成对应的.index文件. 例如"泰迪杯2024B"或"flicker30k"与./data/下的文件夹对应
-    main(MODEL_PATH="./pts/best_model0416.ckpt", getWhat="T",dataset_name="flicker30k")
-    # main(MODEL_PATH="./pts/best_model0416.ckpt", getWhat="I",dataset_name="flicker30k")
+    # main(MODEL_PATH="./pts/best_model0416.ckpt", getWhat="T",dataset_name="flicker30k")
+    main(MODEL_PATH="./pts/best_model0416.ckpt", getWhat="I",dataset_name="flicker30k")
+
+    # 下面是测试，速度一般。
+    # dataset_name = "flicker30k"
+    # my_test_data, df = get_dataset_data(json_path=f"jsons/{dataset_name}/test_data.json")
+    # print("加载数据成功")
+    # test_data = TestDataset(my_test_data,transformImg=preprocess_I,transformText=preprocess_T)
+    # test_loader = DataLoader(test_data,batch_size=32,shuffle=False)
+    # for i, (imgs, caps) in enumerate(tqdm(test_loader)):
+    #     print(i, imgs, caps)
+    #     break

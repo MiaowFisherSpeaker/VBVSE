@@ -23,7 +23,7 @@ from preprocessCaptions import get_summary_text
 # 缓存model
 @st.cache_data
 def my_model(_pt_path="best_model0416.ckpt"):
-    model = get_model(pt_path=_pt_path)
+    _,model = get_model(pt_path=_pt_path)
     print("model加载完毕")
     return model
 
@@ -42,7 +42,9 @@ def get_dataset_data(json_path, dataset_name="泰迪杯2024B"):
         df = pd.read_csv(f'./data/Flickr30k-CNA/test/flickr30k_cn_test.txt', sep='\t', header=None, names=['image_id', 'caption'])
         return data, df
 
-
+def faiss_search(_index, code, k=5):
+    D, I = _index.search(code, k)
+    return D, I
 
 st.title("模型测试页面")
 
@@ -180,7 +182,8 @@ if glob.glob("./indexs/I*.index"):
         _, text_code = get_features(model=model, img_paths=img_paths[0],
                                     captions=my_text)
         text_code = text_code.cpu()
-        D, I = I_index_map.search(text_code, 5)
+        # D, I = I_index_map.search(text_code, 5)
+        D, I = faiss_search(I_index_map, text_code, 5)
         # 分2行3列展示
         col1, col2, col3 = result_empty.columns(3)
 
@@ -213,11 +216,13 @@ if my_image_id != "":
     image_code, _ = get_features(model=model, img_paths=img_paths[my_image_id],
                                  captions="")
     image_code = image_code.cpu()
-    D, I = T_index_map.search(image_code, 5)
+    # D, I = T_index_map.search(image_code, 5)
+    D, I = faiss_search(T_index_map, image_code, 5)
     # 第一列展示原图，以及对应的文本。第二列展示搜索到的文本
     col1, col2 = result_empty.columns(2)
-    col1.image(img_paths[my_image_id], caption="i:"+captions[my_image_id], use_column_width=True)
+    col1.image(img_paths[my_image_id], caption=f"{i}:"+captions[my_image_id], use_column_width=True)
     st.write(f"索引的图片为：{img_paths[my_image_id]}")
+    st.write(f"{img_paths[my_image_id].split('.')}")
     for i in range(5):
         col2.write(captions[I[0][i]])
     st.info("搜索完成")
