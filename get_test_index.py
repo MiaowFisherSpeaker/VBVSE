@@ -15,7 +15,8 @@ batch_size = 32
 
 
 def my_model(_pt_path="./pts/best_model0419.ckpt"):
-    model = get_model(pt_path=_pt_path)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    _, model = get_model(pt_path=_pt_path, map_location=device)
     print("model加载完毕")
     return model
 
@@ -135,6 +136,7 @@ def main(MODEL_PATH="./pts/best_model0419.ckpt", getWhat="T", dataset_name="泰�
         img_paths.append(img_path)
     print("数据全部读取")
     logging.info("数据全部读取")
+
     model = my_model(MODEL_PATH)
     print("模型加载成功")
     logging.info("模型加载成功")

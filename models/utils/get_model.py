@@ -1,7 +1,7 @@
 import torch
 from models import config
 
-device = map_location = torch.device('cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def get_model(pt_path=config.best_checkpoint, map_location=device):
