@@ -31,9 +31,9 @@ def get_dataset_data(json_path, dataset_name="泰迪杯2024B"):
     if dataset_name == "flicker30k":
         with open(json_path, "r") as f:
             data = json.load(f)
-        df = pd.read_csv(f'./data/Flickr30k-CNA/test/flickr30k_cn_test.txt', sep='\t', header=None, names=['image_id', 'caption'])
+        df = pd.read_csv(f'./data/Flickr30k-CNA/test/flickr30k_cn_test.txt', sep='\t', header=None,
+                         names=['image_id', 'caption'])
         return data, df
-
 
 
 def preprocess_I(image_paths):
@@ -91,8 +91,9 @@ def get_features(model, img_paths, captions):
         image_code, text_code = model(imgs, caps, cap_lens=1)
     return image_code, text_code
 
+
 class TestDataset(Dataset):
-    def __init__(self, data,transformImg=None,transformText=None):
+    def __init__(self, data, transformImg=None, transformText=None):
         self.data = data
         self.transformImg = transformImg
         self.transformText = transformText
@@ -108,12 +109,7 @@ class TestDataset(Dataset):
             img_path = self.transformImg(img_path)
         if self.transformText:
             caption = self.transformText(caption)
-        return img_path,caption
-
-
-
-
-
+        return img_path, caption
 
 
 def main(MODEL_PATH="./pts/best_model0419.ckpt", getWhat="T", dataset_name="泰迪杯2024B"):
@@ -193,7 +189,7 @@ if __name__ == "__main__":
     # MODEL_PATH填入模型路径，getWhat填入"I"或"T"，分别获取图向量和文向量对应的.index，可分别用于文搜图和图搜文
     # dataset_name填入数据集名称，用于生成对应的.index文件. 例如"泰迪杯2024B"或"flicker30k"与./data/下的文件夹对应
     # main(MODEL_PATH="./pts/best_model0416.ckpt", getWhat="T",dataset_name="flicker30k")
-    main(MODEL_PATH="./pts/best_model0416.ckpt", getWhat="I",dataset_name="flicker30k")
+    main(MODEL_PATH="./pts/best_model0416.ckpt", getWhat="I", dataset_name="flicker30k")
 
     # 下面是测试，速度一般。
     # dataset_name = "flicker30k"

@@ -20,7 +20,9 @@
   - vsepp.py 图文检索模型(魔改)
 - pts 保存的模型checkpoit参数文件夹
   - 一般为best_model[日期].ckpt
-- calculate_recall_at_k.py 使用向量数据库计算召回率的脚本
+- excel 保存的预测结果以及测试集结果的文件夹
+  - q[2/3].csv
+- calculate_recall_at_k.py 使用向量数据库计算召回率的脚本,效率低下。
 - get_test_index.py 生成测试集向量数据库索引的脚本
   - 运行时请修改if __name__ == '__main__':下的main函数的参数
   - 生成的索引文件会保存在./indexs文件夹下
@@ -30,6 +32,10 @@
 - test.py 测试脚本,也是用于调试，这个不重要
 - train.py 训练脚本,一些参数在models里的config.py中修改
   - 注意，训练前，请自行创建./model文件夹，否则报错，这里没修改。
+- predict[2/3].py 泰迪杯B题附件2、3的预测脚本，会在./excel/生成q[2/3].csv
+- get_[2/3]_[t2i/i2t]_index.py 生成附件2、3的对应的向量数据库索引的脚本。图搜文的就生成文的index数据库。
+- notebook0419waitingfornewidea.ipynb 请忽略，调试用
+- requirements.txt 依赖包,使用pip install -r requirements.txt安装
 
 
 写测试脚本时，导入模型的方式：
