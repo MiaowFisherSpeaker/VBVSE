@@ -7,7 +7,7 @@ from jieba import posseg
 
 from get_test_index import get_features
 import pandas as pd
-
+import numpy as np
 # 模型必须要的
 from models import get_model, ImageRepExtractor, TextRepExtractor, VSEPP
 from models import mktrainval, config
@@ -54,10 +54,16 @@ def search_by_split(my_test_data,model,_index,caption_id):
     if len(top5_indices) < 5:
         # 对整个文本进行搜索，并将结果补足到top5中
         additional_search_results = search_by_word(my_test_data,model,_index,my_caption, k=5) # word传入整个文本,指定k=5
-        additional_indices = set(additional_search_results) - set([index for index, _ in top5_indices])
-        additional_indices = sorted(additional_indices, key=lambda x: additional_search_results.index(x))[
-                             :5 - len(top5_indices)]
-        top5_indices.extend(additional_indices)
+        additional_search_results = np.array(additional_search_results)
+        additional_indices_set = set(additional_search_results)
+        additional_indices = additional_indices_set - set([index for index, _ in top5_indices])
+        unique_additional_indices, indices = np.unique(additional_search_results, return_inverse=True)
+        sorted_indices = np.argsort(-np.bincount(indices))
+        additional_indices_to_add = unique_additional_indices[sorted_indices][:5 - len(top5_indices)]
+        original_indices_to_add = np.ndarray.tolist(np.take(indices, np.where(indices == additional_indices_to_add)[0]))
+        top5_indices.extend(original_indices_to_add)
+        top5_indices = list(set(top5_indices))
+        top5_indices = top5_indices[:5]
 
     return [index for index, _ in top5_indices]
 
@@ -91,7 +97,7 @@ def main(mode,excel_filePath,last_checkpoint=None):
             time1 = time.time()
             _, text_code = get_features(model=model, img_paths=img_paths[0],
                                         captions=my_caption)
-            text_code = text_code.cpu()
+            text_code = text_code.cpu().numpy()
             D, I = I_index_map.search(text_code, 5)
             top5_id_ls = I[0]
             time2 = time.time()
@@ -135,13 +141,13 @@ def main(mode,excel_filePath,last_checkpoint=None):
     df.to_excel(excel_filePath, index=False)
 
 if __name__ == '__main__':
-    # main(
-    #     # 选"raw","split"
-    #     mode = "split",
-    #     excel_filePath = "./excel/testResult/split_0416.xlsx"
-    # )
     main(
         # 选"raw","split"
-        mode = "raw",
-        excel_filePath = "./excel/testResult/raw_0416.xlsx"
+        mode = "split",
+        excel_filePath = "./excel/testResult/split_0416.xlsx"
     )
+    # main(
+    #     # 选"raw","split"
+    #     mode = "raw",
+    #     excel_filePath = "./excel/testResult/raw_0416.xlsx"
+    # )
