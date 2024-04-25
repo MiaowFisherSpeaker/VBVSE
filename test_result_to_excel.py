@@ -31,18 +31,25 @@ def search_by_split(my_test_data,model,_index,caption_id):
     true_img_path = my_test_data["IMAGES"][caption_id]
     # 分词
     words = cut_text(my_caption)
+
     word_search_results = [search_by_word(my_test_data,model,_index,word) for word in words]
 
     # 找公共元素
-    common_indices = set.intersection(*map(set, word_search_results))
+    if not word_search_results:  # 如果word_search_results为空，直接返回空集合
+        common_indices = set()
+    else:
+        common_indices_sets = map(set, word_search_results)
+        common_indices = set.intersection(*common_indices_sets)  # 求交集
+
     # 评分机制，统计每个索引在结果中出现的次数和位置
     score_dict = Counter()
-    for i, indices in enumerate(word_search_results):
-        for index in indices:
-            score_dict[index] += (i + 1) / (len(indices) + 1)
+    # 将共同元素加入到评分机制中，如果它们当前的分数不是最高的
+    for index in common_indices:
+        if index not in score_dict or score_dict[index] <= score_dict.most_common(1)[0][1]:
+            score_dict[index] = score_dict.most_common(1)[0][1] + 1
 
-    # 根据评分机制选取前5个索引
-    top5_indices = sorted(score_dict.items(), key=lambda item: (-item[1], item[0]))[:5]
+    # 根据评分机制选取前5个索引，但要确保包含共同元素
+    top5_indices = score_dict.most_common(5)
 
     if len(top5_indices) < 5:
         # 对整个文本进行搜索，并将结果补足到top5中
@@ -128,12 +135,13 @@ def main(mode,excel_filePath,last_checkpoint=None):
     df.to_excel(excel_filePath, index=False)
 
 if __name__ == '__main__':
-    main(
-        # 选"raw","split"
-        mode = "split",
-        excel_filePath = "./excel/testResult/split_0416.xlsx"
-    )
     # main(
     #     # 选"raw","split"
-    #     mode = "raw",
-    #     excel_filePath = "./excel/testResult/raw_0416.xlsx"
+    #     mode = "split",
+    #     excel_filePath = "./excel/testResult/split_0416.xlsx"
+    # )
+    main(
+        # 选"raw","split"
+        mode = "raw",
+        excel_filePath = "./excel/testResult/raw_0416.xlsx"
+    )
