@@ -65,7 +65,7 @@ def predict_q2(img_path="./data/q2/ImageData/",output_folder='./data/q2/',
         # break
         # 保存结果 这里一次性找的是batch_size个query,所以I有batch_size行
         for j in range(I.shape[0]):
-            result = pd.DataFrame({"text_id": [query_id[j]] * 5,
+            result = pd.DataFrame({"text_id": [query_id[idx[j]]] * 5,
                                    "similarity_ranking": [1, 2, 3, 4, 5],
                                    "result_image_id": [img_paths[k].split('/')[-1] for k in I[j]]})
             result.to_csv(result_folder, mode='a', index=False, header=False)

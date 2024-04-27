@@ -67,7 +67,7 @@ def predict_q3(data_path="./data/q3/ImageData/", output_folder="./data/q3",
         print(img_code.shape)
 
         for j in range(I.shape[0]):
-            result = pd.DataFrame({"image_id": [query_img_paths[j].split('/')[-1]] * 5,
+            result = pd.DataFrame({"image_id": [query_img_paths[idx[j]].split('/')[-1]] * 5,
                                    "similarity_ranking": [1, 2, 3, 4, 5],
                                    "result_text_id": [captions_id[k] for k in I[j]]})
             result.to_csv(result_folder, mode='a', header=False, index=False)
